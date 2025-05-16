@@ -123,6 +123,7 @@ bool Wamr::load(std::string_view bytecode, std::string_view precompiled,
                 const std::unordered_map<uint32_t, std::string> & /*function_names*/) {
   store_ = wasm_store_new(engine());
   if (store_ == nullptr) {
+    fail(FailState::UnableToInitializeCode, "[wasm_store_new]Failed to create new Wasm store");
     return false;
   }
 
@@ -147,11 +148,13 @@ bool Wamr::load(std::string_view bytecode, std::string_view precompiled,
 
   module_ = wasm_module_new(store_.get(), &binary);
   if (module_ == nullptr) {
+    fail(FailState::UnableToInitializeCode, "[wasm_module_new]Failed to create new Wasm module");
     return false;
   }
 
   shared_module_ = wasm_module_share(module_.get());
   if (shared_module_ == nullptr) {
+    fail(FailState::UnableToInitializeCode, "[wasm_module_share]Failed to create new Wasm shared module");
     return false;
   }
 
